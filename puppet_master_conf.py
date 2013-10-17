@@ -10,6 +10,11 @@ def set_host_name(domain,hostname):
     hostname_file = open("/etc/hostname","w")
     hostname_file.write(fqdn + "\n")
     hostname_file.close()
+    try:
+        check_call(['hostname', fqdn ], stderr=STDOUT) 
+    except Exception as hostnamec_e:
+        print "Error while setting the hostname via command : ", fqdn
+        print "More details : " , hostnamec_e
     print("Add hostname : " + fqdn)
 
 
@@ -73,6 +78,7 @@ factpath=$vardir/lib/facter
 templatedir=/etc/puppet/templates/
 modulepath=/etc/puppet/modules/
 report=false
+
 """)
         config.write("[" + re.sub("\.","_",domain) + "]\n")
         config.write("modulepath=/mnt/puppet/" + domain + "/modules/\n")

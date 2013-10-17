@@ -41,6 +41,8 @@ def configure_puppet_master(master_ip,domain,port,agent):
     pmc.set_host_name(domain=domain, hostname='puppetmaster')
     pmc.add_etc_hosts(domain=domain, master_ip=master_ip)
     pmc.make_mnt_puppet_dir(domain=domain)
+    apt_update()
+    apt_install_master()
     pmc.config_puppetmaster_default(port=port, daemon_opts="--ssl_client_header=HTTP_X_SSL_SUBJECT")
     pmc.config_puppet_conf(domain=domain)
     pmc.config_fileserver_conf(domain=domain)
@@ -50,5 +52,7 @@ def configure_puppet_master(master_ip,domain,port,agent):
 def configure_puppet_agent(master_ip,domain,hostname,port,agent='agent'):
     pac.set_host_name(domain=domain,hostname=hostname)
     pac.add_etc_hosts(master_ip=master_ip,domain=domain)
+    apt_update()
+    apt_install_agent()
     pac.config_puppetagent_default()
     pac.config_puppet_conf(domain=domain)
