@@ -17,13 +17,18 @@ def check_user():
         return 1
 
 # Detect OS.
-def get_package_manager():
+def get_package_manager(os=False):
 
-    dist = platform.dist()[0].lower()
+    if os:
+        dist = os;
+    else:
+        dist = platform.dist()[0].lower()
     print "Distribution is : ", dist
     return{
         'ubuntu': 1, 
         'centos': 2,
+        'redhat': 3,
+        'sues'  : 4,
     }.get(dist,0)
 
 
