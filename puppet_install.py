@@ -2,7 +2,9 @@
 
 try:
     import sys
+    import textwrap
     import system 
+    import argparse
 
 except Exception as e :
     print "Error : ", e
@@ -32,7 +34,12 @@ def get_user_input():
     print "To install,"
     print "1.) Puppet Master."
     print "2.) Puppet Agent."
-    agent = raw_input("Select only 1 or 2 : ").strip()
+    try:
+        agent = raw_input("Select only 1 or 2 or press [Ctrl] + [c] exit. : ").strip()
+    except KeyboardInterrupt as e:
+        print "\nPressed [Ctrl] + [c]."
+        print "Script will now exit ..."
+        sys.exit(0) 
 
     if agent == "1":
         print ""
@@ -66,19 +73,74 @@ def get_user_input():
 
 
 
+if __name__ == '__main__':
 
-if system.check_user():
-    print "This is a puppet installation script."
-    print ""
-    agent, master_ip, domain, hostname = get_user_input()
-    get_confirmation(master_ip, domain, hostname)
-    pkg = system.get_package_manager()
-    if not pkg:
-        print "Unidentified package manager."
-        exit(1)
+    parser = argparse.ArgumentParser(
+        description='This is a puppet installation script which can be used to install puppet master and puppet agent.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=textwrap.dedent('''
+Usage options:
+
+Install in interactive mode :
+    sudo python puppet_install.py
+Install puppet agent : 
+    sudo python puppet_install.py --agent master \\
+        --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu
+Install puppet agent : 
+    sudo python puppet_install.py --agent agent \\
+        --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu
+                '''))
+    parser.add_argument('--agent', default='agent',choices={'master','agent'}, help="Set to master if need to install puppet master.")
+    parser.add_argument('--domain', help="Give the domain name of the diployment. \n eg : apps.wso1.com")
+    parser.add_argument('--master-ip', dest='masterip', help='IP address of the puppetmaster node. Eg: 10.1.1.1')
+    parser.add_argument('--hostname', help='Give the hostname of the system. On master node it is \'puppetmaster\' by default. Eg: node001 ')
+    parser.add_argument('--os', choices={'ubuntu','centos','redhat','sues'}, help='Give the operating system as ubuntu/centos/redhat/sues.')
+    args = parser.parse_args()
+
+
+    if system.check_user():
+        print "This is a puppet installation script."
+        print ""
+
+        if  len(sys.argv) < 2:
+            print "Starting with the interactive mode."
+            agent, master_ip, domain, hostname = get_user_input()
+            pkg = system.get_package_manager()
+        elif args.agent == 'agent':
+            print "Going to setup a puppet agent."
+            if (args.domain != None and args.masterip != None and args.hostname != None and args.os != None):
+                domain = args.domain
+                master_ip = args.masterip
+                hostname = args.hostname
+                pkg = args.os 
+                agent = 'agent'
+            else:
+                print "To setup an agent it is required to set all following values."
+                print "Usage: sudo python puppet_install.py --agent agent --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu"
+                exit(1)
+        elif args.agent == 'master':
+            print "Going to setup a puppet master."
+            if (args.domain != None and args.masterip != None and args.os != None):
+                domain = args.domain
+                master_ip = args.masterip 
+                hostname = 'puppetmaster'
+                pkg = args.os 
+                agent = 'master'
+            else:
+                print "To setup a master it is required to set all following values."
+                print "Usage: sudo python puppet_install.py --agent master --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu"
+                exit(1)
+        else:
+            print "Error : --agent [master/agent] only."
+            exit(1)
+
+        if pkg:
+            get_confirmation(master_ip, domain, hostname)
+            system.install_puppet(pkg, master_ip=master_ip, domain=domain, hostname=hostname, agent=agent)
+        else:
+            print "Unidentified package manager."
+            exit(1)
     else:
-        system.install_puppet(pkg, master_ip=master_ip, domain=domain, hostname=hostname, agent=agent)
-        pass
-else:
-    print "Need root access."	
-    print "Run the script as \'root\' or with \'sudo\' permissions. "
+        print "Need root access."	
+        print "Run the script as \'root\' or with \'sudo\' permissions. "
+
