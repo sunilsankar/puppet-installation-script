@@ -5,7 +5,7 @@ This script will install puppet master and puppet agents in an interactive way.
 
 ### Usage options:
 
-#### Interactive mode installation
+#### Interactive mode installation :
 
 - Run script in interactive mode :
 

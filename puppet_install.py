@@ -94,7 +94,7 @@ Install puppet agent :
     parser.add_argument('--domain', help="Give the domain name of the diployment. \n eg : apps.wso1.com")
     parser.add_argument('--master-ip', dest='masterip', help='IP address of the puppetmaster node. Eg: 10.1.1.1')
     parser.add_argument('--hostname', help='Give the hostname of the system. On master node it is \'puppetmaster\' by default. Eg: node001 ')
-    parser.add_argument('--os', choices={'ubuntu','centos','redhat','sues'}, help='Give the operating system as ubuntu/centos/redhat/sues.')
+    parser.add_argument('--os', choices={'debian','ubuntu','centos','redhat','sues'}, help='Give the operating system as ubuntu/centos/redhat/sues.')
     args = parser.parse_args()
 
 

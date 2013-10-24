@@ -26,6 +26,7 @@ def get_package_manager(os=False):
     print "Distribution is : ", dist
     return{
         'ubuntu': 1, 
+        'debian': 1,
         'centos': 2,
         'redhat': 3,
         'sues'  : 4,
