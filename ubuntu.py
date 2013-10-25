@@ -37,6 +37,23 @@ def apt_install_agent():
         print "More details : " , agent_install_e
 
 
+def restart_master():
+    try:
+        print "Restarting puppet master ... "
+        check_call(['service', 'puppetmaster', 'restart'], stderr=STDOUT)
+    except Exception as master_restart_e:
+        print "Error while restarting puppet master."
+        print "More details : " , master_restart_e
+
+def restart_agent():
+    try:
+        print "Restarting puppet agent ... "
+        check_call(['service', 'puppet', 'restart'], stderr=STDOUT)
+    except Exception as agent_restart_e:
+        print "Error while restarting puppet agent."
+        print "More details : " , agent_restart_e
+
+
 def configure_puppet_master(master_ip,domain,port,agent):
     pmc.set_host_name(domain=domain, hostname='puppetmaster')
     pmc.add_etc_hosts(domain=domain, master_ip=master_ip)
@@ -48,6 +65,7 @@ def configure_puppet_master(master_ip,domain,port,agent):
     pmc.config_fileserver_conf(domain=domain)
     pmc.config_auth_conf(domain=domain)
     pmc.config_autosign_conf(domain=domain)
+    restart_master()
 
 def configure_puppet_agent(master_ip,domain,hostname,port,agent='agent'):
     pac.set_host_name(domain=domain,hostname=hostname)
@@ -56,3 +74,4 @@ def configure_puppet_agent(master_ip,domain,hostname,port,agent='agent'):
     apt_install_agent()
     pac.config_puppetagent_default()
     pac.config_puppet_conf(domain=domain)
+    restart_agent()

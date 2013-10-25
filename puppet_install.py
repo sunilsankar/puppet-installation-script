@@ -55,7 +55,7 @@ def get_user_input():
         os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
         if not os:
             os="ubuntu"
-        return 'agent', master_ip.strip(), domain.strip(), "puppetmaster", os.strip()
+        return 'master', master_ip.strip(), domain.strip(), "puppetmaster", os.strip()
     elif agent == "2":
         print ""
         print "You select option 2 to install puppet agent."
@@ -72,7 +72,7 @@ def get_user_input():
         os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
         if not os:
             os="ubuntu"
-        return 'master', master_ip.strip(), domain.strip(), hostname.strip(), os.strip()
+        return 'agent', master_ip.strip(), domain.strip(), hostname.strip(), os.strip()
     else:
         print "The option you select is incorrect."
         get_user_input()
