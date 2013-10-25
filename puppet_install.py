@@ -10,13 +10,14 @@ except Exception as e :
     print "Error : ", e
 
 
-def get_confirmation(master_ip, domain, hostname):
+def get_confirmation(master_ip, domain, hostname, os):
     
     print "====================================================================="
     print ""
     print "Puppet Masters IP address : ", master_ip
     print "Domain of the deployment  : ", domain
     print "FQDN of this node         :  " + hostname + "." + domain
+    print "Operating system          : ", os
     print ""
     print "Please check your input and confirm by pressing [Enter] to continue."
     print "or press [Ctrl] + [c] to stop the installationan exit."
@@ -51,7 +52,10 @@ def get_user_input():
         domain =  raw_input("Give the domain of the deployment [apps.wso2.com] : ")
         if not domain:
             domain="apps.wso2.com"
-        return agent,master_ip,domain,"puppetmaster"
+        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
+        if not os:
+            os="ubuntu"
+        return 'agent', master_ip.strip(), domain.strip(), "puppetmaster", os.strip()
     elif agent == "2":
         print ""
         print "You select option 2 to install puppet agent."
@@ -65,7 +69,10 @@ def get_user_input():
         hostname = raw_input("Give the hostname of the node [node1] : ")
         if not hostname:
             hostname="node1"
-        return agent.strip(),master_ip.strip(),domain.strip(),hostname.strip()
+        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
+        if not os:
+            os="ubuntu"
+        return 'master', master_ip.strip(), domain.strip(), hostname.strip(), os.strip()
     else:
         print "The option you select is incorrect."
         get_user_input()
@@ -104,15 +111,14 @@ Install puppet agent :
 
         if  len(sys.argv) < 2:
             print "Starting with the interactive mode."
-            agent, master_ip, domain, hostname = get_user_input()
-            pkg = system.get_package_manager()
+            agent, master_ip, domain, hostname, os = get_user_input()
         elif args.agent == 'agent':
             print "Going to setup a puppet agent."
             if (args.domain != None and args.masterip != None and args.hostname != None and args.os != None):
                 domain = args.domain
                 master_ip = args.masterip
                 hostname = args.hostname
-                pkg = args.os 
+                os = args.os 
                 agent = 'agent'
             else:
                 print "To setup an agent it is required to set all following values."
@@ -124,7 +130,7 @@ Install puppet agent :
                 domain = args.domain
                 master_ip = args.masterip 
                 hostname = 'puppetmaster'
-                pkg = args.os 
+                os = args.os 
                 agent = 'master'
             else:
                 print "To setup a master it is required to set all following values."
@@ -134,9 +140,9 @@ Install puppet agent :
             print "Error : --agent [master/agent] only."
             exit(1)
 
-        if pkg:
-            get_confirmation(master_ip, domain, hostname)
-            system.install_puppet(pkg, master_ip=master_ip, domain=domain, hostname=hostname, agent=agent)
+        if os:
+            get_confirmation(master_ip, domain, hostname, os)
+            system.install_puppet(system.get_package_manager(os), master_ip, domain, hostname, '8140', agent)
         else:
             print "Unidentified package manager."
             exit(1)
