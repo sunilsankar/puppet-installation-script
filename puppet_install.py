@@ -91,19 +91,19 @@ Usage options:
 Install in interactive mode :
     sudo python puppet_install.py
 Install puppet agent : 
-    sudo python puppet_install.py --agent master \\
+    sudo python puppet_install.py --master \\
         --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu
 Install puppet agent : 
-    sudo python puppet_install.py --agent agent \\
-        --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu
+    sudo python puppet_install.py --agent \\
+        --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node001 --os ubuntu
                 '''))
-    parser.add_argument('--agent', default='agent',choices={'master','agent'}, help="Set to master if need to install puppet master.")
+    parser.add_argument('--agent', action='store_true')
+    parser.add_argument('--master', action='store_true')
     parser.add_argument('--domain', help="Give the domain name of the diployment. \n eg : apps.wso1.com")
     parser.add_argument('--master-ip', dest='masterip', help='IP address of the puppetmaster node. Eg: 10.1.1.1')
     parser.add_argument('--hostname', help='Give the hostname of the system. On master node it is \'puppetmaster\' by default. Eg: node001 ')
     parser.add_argument('--os', choices={'debian','ubuntu','centos','redhat','sues'}, help='Give the operating system as ubuntu/centos/redhat/sues.')
     args = parser.parse_args()
-
 
     if system.check_user():
         print "This is a puppet installation script."
@@ -112,7 +112,7 @@ Install puppet agent :
         if  len(sys.argv) < 2:
             print "Starting with the interactive mode."
             agent, master_ip, domain, hostname, os = get_user_input()
-        elif args.agent == 'agent':
+        elif args.agent == True and args.master == False:
             print "Going to setup a puppet agent."
             if (args.domain != None and args.masterip != None and args.hostname != None and args.os != None):
                 domain = args.domain
@@ -122,9 +122,9 @@ Install puppet agent :
                 agent = 'agent'
             else:
                 print "To setup an agent it is required to set all following values."
-                print "Usage: sudo python puppet_install.py --agent agent --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu"
+                print "Usage: sudo python puppet_install.py --agent --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu"
                 exit(1)
-        elif args.agent == 'master':
+        elif args.agent == False and args.master == True:
             print "Going to setup a puppet master."
             if (args.domain != None and args.masterip != None and args.os != None):
                 domain = args.domain
@@ -134,10 +134,12 @@ Install puppet agent :
                 agent = 'master'
             else:
                 print "To setup a master it is required to set all following values."
-                print "Usage: sudo python puppet_install.py --agent master --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu"
+                print "Usage: sudo python puppet_install.py --master --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu"
                 exit(1)
         else:
-            print "Error : --agent [master/agent] only."
+            print "Error : Use --master or --agent to setup puppet master or puppet agent accordingly."
+            print "Usage: sudo python puppet_install.py --master --domain apps.wso2.com --master-ip 10.1.1.1 --os ubuntu"
+            print "Usage: sudo python puppet_install.py --agent --domain apps.wso2.com --master-ip 10.1.1.1 --hostname node01 --os ubuntu"
             exit(1)
 
         if os:

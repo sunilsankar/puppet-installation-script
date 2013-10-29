@@ -16,19 +16,19 @@ Puppet installation script is a simple automation tool to install puppet master 
         User can specify all relevant parameters with relevant values and run the script. Those parameters will describe in following steps.  
 
 * User should know following details  
-    1. The agent (puppet master/puppet agent) that the user need to install in a specific instance. (*--agent [master/agent]*)  
-    1. Domain name that will associate with the environment. (*--domain*)  
+    1. Install puppet master or puppet agent that the user need to install and configure. (*--master or --agent*)  
+    1. Domain name that will associate with the environment. (*--domain your.domain.com*)  
 
         _eg: apps.wso2.com_  
-    1. IP address of the instance the puppet master will be installed in. (*--master-ip*)  
+    1. IP address of the instance the puppet master will be installed in. (*--master-ip 10.0.0.1*)  
 
         _eg: 10.10.10.10_  
-    1. Host name convention of other instances. By default puppet master will have ‘puppetmaster’ as the host name. (*--hostname*)  
+    1. Host name convention of other instances. By default puppet master will have ‘puppetmaster’ as the host name. (*--hostname node001*)  
 
         _eg. node001, node002 …_ 
 
         ___** Note : Do not give any fully qualified domain names (FQDN) as hostname like node0023.apps.wso2.com.___  
-    + Operating system on the instance. (*--os*)  
+    + Operating system on the instance. (*--os ubuntu*)  
 
         ___** Note : Currently this supports only for Ubuntu and Debian systems only.___  
 
@@ -56,7 +56,7 @@ Puppet installation script is a simple automation tool to install puppet master 
         
     Or pass values as arguments;
 
-    <pre> sudo python puppet_install.py --agent master \
+    <pre> sudo python puppet_install.py --master \
                                     --domain apps.wso2.com \  
                                     --master-ip 10.1.1.1 \  
                                     --os ubuntu </pre>
@@ -80,7 +80,7 @@ Puppet installation script is a simple automation tool to install puppet master 
     And set option as ***‘2’***.
 
     Or pass values as arguments:
-    <pre> sudo python puppet_install.py --agent agent \
+    <pre> sudo python puppet_install.py --agent \
                                     --domain apps.wso2.com \
                                     --master-ip 10.1.1.1 \
                                     --hostname node001 \
