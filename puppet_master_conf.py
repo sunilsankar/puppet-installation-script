@@ -171,7 +171,7 @@ def config_autosign_conf(domain,path='/etc/puppet/autosign.conf'):
     
     try:
         config = open(path,'w')
-        config.write('*.' + domain + "\n")
+        config.write('* \n')
         print "Configured the autosign.conf settings."
         config.close()
     except Exception as autosign_config_e:
