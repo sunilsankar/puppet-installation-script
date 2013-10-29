@@ -16,7 +16,7 @@ Puppet installation script is a simple automation tool to install puppet master 
         User can specify all relevant parameters with relevant values and run the script. Those parameters will describe in following steps.  
 
 * User should know following details  
-    1. The agent that the user need to install in a specific instance. (*--agent*)  
+    1. The agent (puppet master/puppet agent) that the user need to install in a specific instance. (*--agent [master/agent]*)  
     1. Domain name that will associate with the environment. (*--domain*)  
 
         _eg: apps.wso2.com_  
