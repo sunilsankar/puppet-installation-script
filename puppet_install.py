@@ -5,6 +5,8 @@ try:
     import textwrap
     import system 
     import argparse
+    import socket
+    import platform
 
 except Exception as e :
     print "Error : ", e
@@ -46,15 +48,17 @@ def get_user_input():
         print ""
         print "You select option 1 to install puppet master."
         print ""
-        master_ip = raw_input("Give the IP address of puppet master : ")
+        ip = socket.gethostbyname(socket.gethostname())
+        master_ip = raw_input("Give the IP address of puppet master [" + ip + "] : ")
         if not master_ip:
-            sys.exit(1)
+            master_ip = ip
         domain =  raw_input("Give the domain of the deployment [apps.wso2.com] : ")
         if not domain:
             domain="apps.wso2.com"
-        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
+        os_dist = platform.dist()[0].lower()
+        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/suse} [" + os_dist + "] : ")
         if not os:
-            os="ubuntu"
+            os = os_dist
         return 'master', master_ip.strip(), domain.strip(), "puppetmaster", os.strip()
     elif agent == "2":
         print ""
@@ -69,9 +73,10 @@ def get_user_input():
         hostname = raw_input("Give the hostname of the node [node1] : ")
         if not hostname:
             hostname="node1"
-        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/sues} [ubuntu] : ")
+        os_dist = platform.dist()[0].lower()
+        os = raw_input("Give the operating system {ubuntu/debian/centos/redhat/suse} [" + os_dist + "] : ")
         if not os:
-            os="ubuntu"
+            os = os_dist
         return 'agent', master_ip.strip(), domain.strip(), hostname.strip(), os.strip()
     else:
         print "The option you select is incorrect."
@@ -102,7 +107,7 @@ Install puppet agent :
     parser.add_argument('--domain', help="Give the domain name of the diployment. \n eg : apps.wso1.com")
     parser.add_argument('--master-ip', dest='masterip', help='IP address of the puppetmaster node. Eg: 10.1.1.1')
     parser.add_argument('--hostname', help='Give the hostname of the system. On master node it is \'puppetmaster\' by default. Eg: node001 ')
-    parser.add_argument('--os', choices={'debian','ubuntu','centos','redhat','sues'}, help='Give the operating system as ubuntu/centos/redhat/sues.')
+    parser.add_argument('--os', choices=['debian','ubuntu','centos','redhat','suse'], help='Give the operating system as ubuntu/centos/redhat/suse.')
     args = parser.parse_args()
 
     if system.check_user():

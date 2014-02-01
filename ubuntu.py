@@ -22,6 +22,7 @@ def set_repo():
 
 def apt_update():
     try:
+        print "Updating repo list. Please wait ..."
         check_call(['apt-get', 'update'], stdout=open(os.devnull, 'wb'))
         print "Update apt repository."
     except Exception as apt_update_e:

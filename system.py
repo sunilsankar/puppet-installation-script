@@ -4,6 +4,7 @@ try:
     import platform
     import os
     import ubuntu
+    import redhat
 
 except Exception as e :
     print "Error : ", e
