@@ -19,12 +19,13 @@ def set_host_name(domain,hostname):
 
 
 # add entries to /etc/hosts
-def add_etc_hosts(master_ip, domain, file_path='/etc/hosts'):
+def add_etc_hosts(master_ip, domain, hostname, file_path='/etc/hosts'):
 
     try: 
         config = open(file_path,'w')
         config.write("# Added by the puppet installation script.\n")
         config.write("127.0.0.1 localhost\n")
+        config.write("127.0.0.1 " + hostname + "." + domain + " \n")
         config.write(master_ip + " puppetmaster." + domain +" \n")
         config.close()
         print "Configured the /etc/hosts."
@@ -50,33 +51,9 @@ def config_puppetagent_default(file_path='/etc/default/puppet', start='yes'):
 # Configure 'puppet.conf'
 def config_puppet_conf(domain, file_path='/etc/puppet/puppet.conf'):
 
-    try: 
-        config = open(file_path,'w')
-        config.write("""# Added by the puppet installation script.
-[main]
-logdir=/var/log/puppet
-vardir=/var/lib/puppet
-ssldir=/var/lib/puppet/ssl
-rundir=/var/run/puppet
-factpath=$vardir/lib/facter
-templatedir=$confdir/templates
-""")
-        config.write("server=puppetmaster." + domain + "\n")
-        config.write("""waitforcert=60
-report=false
-
-[master]
-""")
-        config.write("environment=" + re.sub("\.","_",domain) + "\n")
-        config.write("""modulepath=/etc/puppet/$environment/modules
-templatedir=/etc/puppet/$environment/templates
-manifest=/etc/puppet/$environment/manifests/site.pp
-manifestdir=/etc/puppet/$environment/manifests/
-
-[agent]
-""")
-        config.write("environment=" + re.sub("\.","_",domain) + "\n")
-        config.close()
+    try:
+        setserver = '2i server=puppetmaster.' + domain
+        check_call(["sed", "-i", setserver, file_path ]) 
         print "Configured the puppet.conf settings."
     except Exception as agent_config_e:
         print "Error while configuring puppet.conf."
